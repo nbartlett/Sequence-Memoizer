@@ -40,8 +40,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>edu.columbia.stat.wood.sequencememoizer.v1.util</excludePackageNames>
+                <configuration>                    <excludePackageNames>edu.columbia.stat.wood.pub.sequencememoizer.util</excludePackageNames>
                 </configuration>
             </plugin>
             <plugin>
