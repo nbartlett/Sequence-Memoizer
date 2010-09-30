@@ -1,7 +1,8 @@
+
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
  */
+
 package edu.columbia.stat.wood.pub.util;
 
 /**
