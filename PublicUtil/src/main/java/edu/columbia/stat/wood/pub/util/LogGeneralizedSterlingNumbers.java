@@ -22,6 +22,7 @@ public class LogGeneralizedSterlingNumbers {
      */
     public LogGeneralizedSterlingNumbers(double discount){
         if(discount <= 0.0 || discount >= 1.0){
+            System.out.println(discount);
             throw new IllegalArgumentException("Discount must be in (0,1.0)");
         }
         d = discount;

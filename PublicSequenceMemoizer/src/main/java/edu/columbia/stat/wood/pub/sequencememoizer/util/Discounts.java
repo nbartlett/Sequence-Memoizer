@@ -190,6 +190,7 @@ public class Discounts implements Serializable{
      */
     public void stepDiscounts(double eps, double p) {
         double proposal;
+        p = p < .05 ? .05 : p;
 
         for(int i = 0; i < discountGradient.length; i++){
             proposal = discounts[i] + eps * discountGradient[i] / p;

@@ -21,6 +21,10 @@ import edu.columbia.stat.wood.pub.util.MutableDouble;
 import edu.columbia.stat.wood.pub.util.Pair;
 import edu.columbia.stat.wood.pub.util.SeatingArranger;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -250,7 +254,9 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
     public double sample(int numSweeps){
         for(int i = 0; i < numSweeps - 1; i++){
             sampleSeatingArrangements(1);
-            sampleDiscounts(1);
+            double l = sampleDiscounts(1);
+            discounts.print();
+            System.out.println(l);
         }
 
         sampleSeatingArrangements(1);
@@ -286,7 +292,15 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
         double discount;
         int tci, tti, c, t;
 
-        discount = discounts.get(d - r.edgeLength, d);
+        if(d == 0){
+            discount = discounts.get(0);
+        } else {
+            discount = discounts.get(d - r.edgeLength, d);
+        }
+        
+        if(Double.isNaN(discount)){
+            System.out.println();
+        }
         isn = new IntSamplingNode(parentisn, discount, baseDistribution);
 
         tci = 0;
@@ -371,7 +385,7 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
 
     private double score(IntRestaurant r, int restaurantDepth) {
         double logLik, discount;
-        LogGeneralizedSterlingNumbers lgsn;
+        LogGeneralizedSterlingNumbers lgsn = null;
         int tci, tti;
 
         logLik = 0.0;
@@ -382,7 +396,13 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
         }
 
         discount = discounts.get(restaurantDepth - r.edgeLength, restaurantDepth);
-        lgsn = new LogGeneralizedSterlingNumbers(discount);
+        try {
+            lgsn = new LogGeneralizedSterlingNumbers(discount);
+        } catch (IllegalArgumentException e){
+            System.out.println(restaurantDepth);
+            e.printStackTrace();
+            System.exit(-1);
+        }
 
         logLik += LogBracketFunction.logBracketFunction(discount, r.tables - 1, discount);
         logLik -= LogBracketFunction.logBracketFunction(1, r.customers - 1, 1.0);
@@ -778,5 +798,33 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
         }
 
         r.edgeNode = is.get(in.readInt());
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, IOException{
+        int[] train = new int[1347805];
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(new File("/Users/nicholasbartlett/Desktop/train.txt")));
+            String line;
+            int index = 0;
+            while((line = br.readLine()) != null){
+                train[index++] = Integer.parseInt(line);
+            }
+
+            IntSequenceMemoizerParameters smp = new IntSequenceMemoizerParameters(57847);
+            IntSequenceMemoizer sm = new IntSequenceMemoizer(smp);
+
+            System.out.println(smp.discounts[0]);
+
+            
+            sm.continueSequence(train);
+            System.out.println(sm.score());
+            
+            System.out.println(IntRestaurant.count);
+            sm.sample(10);
+        } finally {
+            br.close();
+        }       
     }
 }
