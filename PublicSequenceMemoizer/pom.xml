@@ -21,12 +21,6 @@
     </repositories>
     
     <dependencies>
-         <dependency>
-            <groupId>edu.columbia.stat.wood.pub</groupId>
-            <artifactId>util</artifactId>
-            <version>1.0</version>
-             <type>jar</type>
-         </dependency>
         <dependency>
             <groupId>gnu</groupId>
             <artifactId>trove</artifactId>
