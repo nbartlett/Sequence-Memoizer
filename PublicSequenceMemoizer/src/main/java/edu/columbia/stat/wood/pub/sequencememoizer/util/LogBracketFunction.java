@@ -1,9 +1,9 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
-package edu.columbia.stat.wood.pub.util;
+package edu.columbia.stat.wood.pub.sequencememoizer.util;
 
 /**
  * Class to provide static method to get the log of the bracket function often

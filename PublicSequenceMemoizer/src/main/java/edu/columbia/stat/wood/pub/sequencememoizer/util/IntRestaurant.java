@@ -1,6 +1,6 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package edu.columbia.stat.wood.pub.sequencememoizer.util;
@@ -8,8 +8,6 @@ package edu.columbia.stat.wood.pub.sequencememoizer.util;
 import edu.columbia.stat.wood.pub.sequencememoizer.IntSequenceMemoizer;
 import edu.columbia.stat.wood.pub.sequencememoizer.util.IntSequence.IntSeqNode;
 import edu.columbia.stat.wood.pub.sequencememoizer.IntSequenceMemoizer.SeatReturn;
-import edu.columbia.stat.wood.pub.util.IntMap;
-import edu.columbia.stat.wood.pub.util.SeatingArranger;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -69,12 +67,7 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
      */
     public IntSeqNode edgeNode;
 
-    /**
-     * Static count of total instantiated restaurants.
-     */
-    public static int count = 0;
-
-    public IntRestaurant(IntRestaurant parent, int edgeStart,  int edgeLength, IntSeqNode edgeNode,  int numLeafNodesAtOrBelow) {
+    public IntRestaurant(IntRestaurant parent, int edgeStart,  int edgeLength, IntSeqNode edgeNode,  int numLeafNodesAtOrBelow, MutableLong restCount) {
         this.parent = parent;
         this.edgeStart = edgeStart;
         this.edgeLength = edgeLength;
@@ -86,7 +79,7 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
         }
         customers = 0;
         tables = 0;
-        count++;
+        restCount.increment();
     }
 
     public void setTableConfig(int[] types, int[] customersAndTables, int customers, int tables) {
@@ -99,23 +92,91 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
     public double getPP(int type, double p, double discount, SeatReturn sr) {
         int index, tc, tt, tci, tti;
 
-        index = getIndex(type);
 
-        assert types[index] == type;
+        if(type > types[types.length -1]){
+            tt = 0;
+            tc = 0;
+        } else {
+            index = getIndex(type);
+            if(types[index] == type){
+                tci = 2 * index;
+                tti = tci + 1;
 
-        tci = 2 * index;
-        tti = tci + 1;
-
-        tc = customersAndTables[tci];
-        tt = customersAndTables[tti];
-
+                tc = customersAndTables[tci];
+                tt = customersAndTables[tti];
+            } else {
+                tt = 0;
+                tc = 0;
+            }
+        }
+        
         sr.set(false, tt, customers, tables);
         p -= ((double) tc - (double) tt * discount) / (double) customers;
 
         return p * (double) customers / ((double) tables * discount);
     }
+
+    public void deleteCustomers(int nDelete, double discount) {
+        int[] c = new int[types.length];
+
+        for (int t = 0; t < types.length; t++) {
+            c[t] = customersAndTables[2 * t];
+        }
+
+        int[] toDelete = SampleMultinomial.deleteCustomersAtRandom(nDelete, c, customers, IntSequenceMemoizer.RNG);
+        int number_zeros = 0;
+        for (int t = 0; t < types.length; t++) {
+            if (toDelete[t] > 0) {
+                if(toDelete[t] == customersAndTables[2*t]){
+                    customers -= toDelete[t];
+                    tables -= customersAndTables[2 * t + 1];
+
+                    customersAndTables[2 * t] = 0;
+                    customersAndTables[2 * t + 1] = 0;
+
+                    number_zeros++;
+                } else {
+
+                    int[] sa = SeatingArranger.getSeatingArrangement(customersAndTables[2 * t], customersAndTables[2 * t + 1], discount);
+                    int[] cToDelete = SampleMultinomial.deleteCustomersAtRandom(toDelete[t], sa, customersAndTables[2 * t], IntSequenceMemoizer.RNG);
+
+                    customersAndTables[2 * t] -= toDelete[t];
+                    customers -= toDelete[t];
+
+                    for (int i = 0; i < sa.length; i++) {
+                        if (sa[i] == cToDelete[i]) {
+                            tables--;
+                            customersAndTables[2 * t + 1]--;
+                        }
+                    }
+                    assert customersAndTables[2*t] >= customersAndTables[2*t +1];
+                }
+            }
+        }
+
+        if(number_zeros > 0){
+            int[] new_types = new int[types.length - number_zeros];
+            int[] new_customersAndTables = new int[customersAndTables.length - 2 * number_zeros];
+
+            int j = 0, k = 0;
+            for(int i = 0; i < types.length; i++){
+                if(customersAndTables[2*i] > 0){
+                    new_types[j++] = types[i];
+                    new_customersAndTables[k++] = customersAndTables[2*i];
+                    new_customersAndTables[k++] = customersAndTables[2*i + 1];
+                    if(new_customersAndTables[k-2] < new_customersAndTables[k-1] || new_customersAndTables[k-2] == 0 || new_customersAndTables[k-1] == 0){
+                        throw new RuntimeException("new_customersAndTables[k-1] = " + new_customersAndTables[k-1] + ", new_customersAndTables[k-2] = " + new_customersAndTables[k-2]);
+                    }
+                }
+            }
+
+            types = new_types;
+            customersAndTables = new_customersAndTables;
+        }
+    }
     
-    public double seat(int type, double p, double discount, SeatReturn sr) {
+    public double seat(int type, double p, double discount, SeatReturn sr, IntSequenceMemoizer sm) {
+                
         if (customers == 0) {
             sr.set(true, 0, customers, tables);
 
@@ -174,6 +235,10 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
             }
         }
 
+        if (customers >= sm.maxCustomersInRestaurant) {
+            deleteCustomers((int) (sm.maxCustomersInRestaurant * .1),discount);
+        }
+
         return p;
     }
 
@@ -200,7 +265,7 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
         customersAndTables = newCustomersAndTables;
     }
 
-    public IntRestaurant fragmentForInsertion(IntRestaurant irParent, int irEdgeStart, int irEdgeLength, IntSeqNode irEdgeNode, double discount, double irDiscount) {
+    public IntRestaurant fragmentForInsertion(IntRestaurant irParent, int irEdgeStart, int irEdgeLength, IntSeqNode irEdgeNode, double discount, double irDiscount, MutableLong restCount) {
         double fragDiscount, fragConcentration, numerator, denominator;
         IntRestaurant intermediateRestaurant;
         int[] irTypes;
@@ -210,7 +275,7 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
         customers = 0;
         tables = 0;
 
-        intermediateRestaurant = new IntRestaurant(irParent, irEdgeStart, irEdgeLength, irEdgeNode, numLeafNodesAtOrBelow);
+        intermediateRestaurant = new IntRestaurant(irParent, irEdgeStart, irEdgeLength, irEdgeNode, numLeafNodesAtOrBelow, restCount);
 
         if (types == null) {
             edgeLength -= irEdgeLength;
@@ -280,15 +345,15 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
         return intermediateRestaurant;
     }
 
-    public IntRestaurant fragmentForPrediction(IntRestaurant irParent, double discount, double irDiscount){
+    public IntRestaurant fragmentForPrediction(IntRestaurant irParent, double discount, double irDiscount, MutableLong restCount){
         IntRestaurant intermediateRestaurant;
         double fragDiscount, fragConcentration, numerator, denominator;
         int[] irTypes;
         int[] irCustomersAndTables, tsa;
         int l, irc, irt, tci, tti, tc, tt, fc, ft;
 
-        intermediateRestaurant = new IntRestaurant(irParent, 0, 0, null, 0);
-        count--;
+        intermediateRestaurant = new IntRestaurant(irParent, 0, 0, null, 0, restCount);
+        restCount.decrement();
 
         if(types != null){
             fragDiscount = discount / irDiscount;
@@ -362,21 +427,21 @@ public class IntRestaurant extends IntMap<IntRestaurant> implements Serializable
         return l;
     }
 
-    public final void removeFromTree(){
+    public final void removeFromTree(MutableLong restCount){
         parent.remove(edgeNode.intChunk()[edgeStart]);
         if(!parent.isEmpty()){
             parent.decrementLeafNodeCount();
         }
-        count--;
+        restCount.decrement();
     }
 
-    public final void removeFromTreeAndEdgeNode(){
+    public final void removeFromTreeAndEdgeNode(MutableLong restCount){
         edgeNode.remove(this);
         parent.remove(edgeNode.intChunk()[edgeStart]);
         if(!parent.isEmpty()){
             parent.decrementLeafNodeCount();
         }
-        count--;
+        restCount.decrement();
     }
 
     public void incrementLeafNodeCount(){

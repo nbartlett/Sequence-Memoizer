@@ -1,14 +1,11 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package edu.columbia.stat.wood.pub.sequencememoizer.util;
 
 import edu.columbia.stat.wood.pub.sequencememoizer.IntSequenceMemoizer;
-import edu.columbia.stat.wood.pub.util.IntDiscreteDistribution;
-import edu.columbia.stat.wood.pub.util.Pair;
-import edu.columbia.stat.wood.pub.util.SampleWithoutReplacement;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -400,8 +397,6 @@ public class IntSamplingNode {
                     }
                 }
             }
-
-            //System.out.println();
 
             throw new RuntimeException("should not get to here since we need to delete someone");
         }

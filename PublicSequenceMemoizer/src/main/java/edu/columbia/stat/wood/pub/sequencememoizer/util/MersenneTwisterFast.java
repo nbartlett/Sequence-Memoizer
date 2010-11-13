@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.columbia.stat.wood.pub.util;
+package edu.columbia.stat.wood.pub.sequencememoizer.util;
 
 import java.io.*;
 import java.util.*;

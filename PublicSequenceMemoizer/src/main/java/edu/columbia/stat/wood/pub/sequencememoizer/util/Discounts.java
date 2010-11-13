@@ -1,6 +1,6 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package edu.columbia.stat.wood.pub.sequencememoizer.util;
@@ -190,6 +190,7 @@ public class Discounts implements Serializable{
      */
     public void stepDiscounts(double eps, double p) {
         double proposal;
+
         p = p < .05 ? .05 : p;
 
         for(int i = 0; i < discountGradient.length; i++){

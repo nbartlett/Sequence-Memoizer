@@ -1,9 +1,9 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
-package edu.columbia.stat.wood.pub.util;
+package edu.columbia.stat.wood.pub.sequencememoizer.util;
 
 import java.util.HashMap;
 
@@ -21,11 +21,14 @@ public class LogGeneralizedSterlingNumbers {
      * @param discount discount value to be used when calculating the generalized sterling number
      */
     public LogGeneralizedSterlingNumbers(double discount){
-        if(discount <= 0.0 || discount >= 1.0){
-            System.out.println(discount);
-            throw new IllegalArgumentException("Discount must be in (0,1.0)");
+        if(discount >= 1.0){
+            d = .999;
+        } else if (discount <= 0.0){
+            d = .001;
+        }  else {
+            d = discount;
         }
-        d = discount;
+
         lookup = new HashMap<Pair<Integer,Integer>, Double>();
     }
 

@@ -1,6 +1,6 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package edu.columbia.stat.wood.pub.sequencememoizer.util;
@@ -74,9 +74,9 @@ public class IntSequence implements Serializable {
      * Shorten the sequence by deleting the earliest node and all the restaurant
      * nodes in the model which point to it.
      */
-    public void shorten() {
+    public void shorten(MutableLong restCount) {
         for (IntRestaurant r : first) {
-            r.removeFromTree();
+            r.removeFromTree(restCount);
         }
 
         length -= nodeSize;

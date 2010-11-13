@@ -1,8 +1,7 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
-
 package edu.columbia.stat.wood.pub.sequencememoizer;
 
 /**
@@ -45,6 +44,11 @@ public class SequenceMemoizerParameters {
     public long maxNumberRestaurants;
 
     /**
+     * Max allowable customers in any given restaurant in the model.
+     */
+    public long maxCustomersInRestaurant;
+
+    /**
      * This value must be greater than or equal to 1024, but we suggest much higher,
      * probably something like maxNumberRestaurants * 10.  The construction of the tree
      * which makes up the major data structure for the model
@@ -65,21 +69,24 @@ public class SequenceMemoizerParameters {
      * @param seed
      * @param maxNumberRestaurants
      * @param maxSequenceLength
+     * @param maxCustomersInRestaurant
      */
-    public SequenceMemoizerParameters(double[] discounts, double infiniteDiscount, int depth, long seed, long maxNumberRestaurants, long maxSequenceLength) {
+    public SequenceMemoizerParameters(double[] discounts, double infiniteDiscount, int depth, long seed, long maxNumberRestaurants, long maxSequenceLength, long maxCustomersInRestaurant) {
         this.discounts = discounts;
         this.infiniteDiscount = infiniteDiscount;
         this.depth = depth;
         this.seed = seed;
         this.maxNumberRestaurants = maxNumberRestaurants;
         this.maxSequenceLength = maxSequenceLength;
+        this.maxCustomersInRestaurant = maxCustomersInRestaurant;
         checkParameters();
     }
 
     /**
      * Constructor allowing for some of the parameters to be specified.  Default values
      * are used for all omitted variables and are set as discounts = discounts = {0.5, 0.7, 0.8, 0.82, 0.84, 0.88, 0.91, 0.92, 0.93, 0.94, 0.95},
-     * infiniteDiscount = 0.5, depth = 1023, seed = 3, maxNumberRestaurants = Long.MAX_VALUE, maxSequenceLength = Long.MAX_VALUE
+     * infiniteDiscount = 0.5, depth = 1023, seed = 3, maxNumberRestaurants = Long.MAX_VALUE, maxSequenceLength = Long.MAX_VALUE,
+     * maxCustomersInRestaurant = Long.MAX_VALUE
      * @param depth
      * @param maxNumberRestaurants
      * @param maxSequenceLength
@@ -91,6 +98,7 @@ public class SequenceMemoizerParameters {
         this.seed = 3;
         this.maxNumberRestaurants = maxNumberRestaurants;
         this.maxSequenceLength = maxSequenceLength;
+        this.maxCustomersInRestaurant = Long.MAX_VALUE;
         checkParameters();
     }
 
@@ -98,6 +106,7 @@ public class SequenceMemoizerParameters {
      * Constructor allowing for some of the parameters to be specified.  Default values
      * are used for all omitted variables and are set as discounts = discounts = {0.5, 0.7, 0.8, 0.82, 0.84, 0.88, 0.91, 0.92, 0.93, 0.94, 0.95},
      * infiniteDiscount = 0.5, depth = 1023, seed = 3, maxNumberRestaurants = Long.MAX_VALUE, maxSequenceLength = Long.MAX_VALUE
+     * maxCustomersInRestaurant = Long.MAX_VALUE
      * @param depth
      */
     public SequenceMemoizerParameters(int depth){
@@ -108,6 +117,7 @@ public class SequenceMemoizerParameters {
      * Constructor allowing for some of the parameters to be specified.  Default values
      * are used for all omitted variables and are set as discounts = discounts = {0.5, 0.7, 0.8, 0.82, 0.84, 0.88, 0.91, 0.92, 0.93, 0.94, 0.95},
      * infiniteDiscount = 0.5, depth = 1023, seed = 3, maxNumberRestaurants = Long.MAX_VALUE, maxSequenceLength = Long.MAX_VALUE
+     * maxCustomersInRestaurant = Long.MAX_VALUE
      * @param maxNumberRestaurants
      * @param maxSequenceLength
      */
@@ -119,6 +129,7 @@ public class SequenceMemoizerParameters {
      * Constructor allowing for some of the parameters to be specified.  Default values
      * are used for all omitted variables and are set as discounts = discounts = {0.5, 0.7, 0.8, 0.82, 0.84, 0.88, 0.91, 0.92, 0.93, 0.94, 0.95},
      * infiniteDiscount = 0.5, depth = 1023, seed = 3, maxNumberRestaurants = Long.MAX_VALUE, maxSequenceLength = Long.MAX_VALUE
+     * maxCustomersInRestaurant = Long.MAX_VALUE
      */
     public SequenceMemoizerParameters() {
         this(1023);
@@ -147,6 +158,10 @@ public class SequenceMemoizerParameters {
         if(maxSequenceLength < 1024){
             throw new IllegalArgumentException("maxSequenceLength must be greater than or equal to 1024.  There is "
                     + "very little harm, in terms of memory, done by setting this to be quite large.");
+        }
+
+        if(maxCustomersInRestaurant <= 0){
+            throw new IllegalArgumentException("maxCustomersInRestaurant must be > 0");
         }
     }
 }

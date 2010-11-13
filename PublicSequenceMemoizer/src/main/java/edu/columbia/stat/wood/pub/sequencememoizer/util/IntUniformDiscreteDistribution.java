@@ -1,9 +1,9 @@
-
 /*
- * Copyright © 2010 by The Trustees of Columbia University in the City of New York. All rights reserved.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
-package edu.columbia.stat.wood.pub.util;
+package edu.columbia.stat.wood.pub.sequencememoizer.util;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -25,19 +25,19 @@ public class IntUniformDiscreteDistribution implements IntDiscreteDistribution, 
      */
     public IntUniformDiscreteDistribution(int alphabetSize){
         leftType = 0;
-        rightType = alphabetSize;
+        rightType = alphabetSize - 1;
         p = 1.0 / (double) alphabetSize;
     }
 
     /**
-     * Creates a uniform discrete distribution over the integers [leftType, rightType).
+     * Creates a uniform discrete distribution over the integers [leftType, rightType].
      * @param leftType
      * @param rightType
      */
-    public void IntUniformDiscreteDistribuiton(int leftType, int rightType){
+    public IntUniformDiscreteDistribution(int leftType, int rightType){
         this.leftType = leftType;
         this.rightType = rightType;
-        p = 1.0 / (double) (rightType - leftType);
+        p = 1.0 / (double) ((long) rightType - (long) leftType + (long) 1);
     }
 
     /**
@@ -46,7 +46,7 @@ public class IntUniformDiscreteDistribution implements IntDiscreteDistribution, 
      * @return probability of type
      */
     public double probability(int type) {
-        if(type < rightType && type >= leftType){
+        if(type <= rightType && type >= leftType){
             return p;
         } else {
             return 0.0;
@@ -66,7 +66,7 @@ public class IntUniformDiscreteDistribution implements IntDiscreteDistribution, 
         int type = leftType;
         
         public boolean hasNext() {
-            return type < rightType;
+            return type <= rightType;
         }
 
         public Pair<Integer, Double> next() {
