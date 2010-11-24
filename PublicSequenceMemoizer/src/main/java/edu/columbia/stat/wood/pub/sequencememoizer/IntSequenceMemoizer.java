@@ -198,6 +198,7 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
 
         fullSequence = new int[context.length + sequenceLength];
         index = context.length;
+        System.arraycopy(context, 0, fullSequence, 0, index);
 
         for (int i = 0; i < sequenceLength; i++) {
             c = new int[index];
@@ -804,9 +805,22 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException{
-        int[] train = new int[1347805];
 
-        BufferedReader br = null;
+        IntSequenceMemoizerParameters smp = new IntSequenceMemoizerParameters(100);
+        IntSequenceMemoizer sm = new IntSequenceMemoizer(smp);
+        sm.continueSequence(new int[]{97,98,99,44,97,98,99,44,97,98,99,44,97,98,99,44,97,98,99});
+
+        sm.sample(100);
+
+        int[] samp = sm.generate(new int[]{97,98}, 100);
+
+        for(int i = 0; i < 100; i++){
+            System.out.println(samp[i]);
+        }
+
+
+
+        /*BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(new File("/Users/nicholasbartlett/Desktop/train.txt")));
             String line;
@@ -827,6 +841,6 @@ public class IntSequenceMemoizer implements IntSequenceMemoizerInterface, Serial
             //sm.sample(1);
         } finally {
             br.close();
-        }
+        }*/
     }
 }
