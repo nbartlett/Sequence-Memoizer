@@ -1,0 +1,6 @@
+
+Version 1.1 : Generate sequence method was fixd to take context argument into account.  Generate was working fine, but generate sequence need small update.
+
+commit  14fff867030685a0893c
+tree    a09ff66113e1e2a2c550
+parent  cf4ff6f7dbc7e7d11662
