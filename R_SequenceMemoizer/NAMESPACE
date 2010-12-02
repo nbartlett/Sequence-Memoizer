@@ -1,0 +1,7 @@
+exportClasses (IntSequenceMemoizerInterface)
+
+exportClasses (IntSequenceMemoizer)
+exportMethods (IntSequenceMemoizer)
+
+exportClasses (IntSequenceMemoizerParameters)
+exportMethods (IntSequenceMemoizerParameters)
