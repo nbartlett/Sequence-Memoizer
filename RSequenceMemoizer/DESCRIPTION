@@ -9,6 +9,6 @@ Description: The SequenceMemoizer package provides an
   written in Java.
 Depends: R (>= 2.12.0), rJava (>= 0.8), methods
 SystemRequirements: Java (>= 5.0)
-License: Artistic-2.0
+License: file LICENSE
 LazyLoad: yes
 Collate: 'onLoad.R' 'IntSequenceMemoizerParameters.R' 'IntSequenceMemoizerInterface.R' 'IntSequenceMemoizer.R'
