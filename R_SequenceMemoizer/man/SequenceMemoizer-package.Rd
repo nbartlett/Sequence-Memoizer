@@ -1,9 +1,9 @@
-\name{SequenceMemoizer-package}
+\name{RSequenceMemoizer-package}
 \docType{package}
-\alias{SequenceMemoizer-package}
-\alias{SequenceMemoizer}
+\alias{RSequenceMemoizer-package}
+\alias{RSequenceMemoizer}
 \title{SequenceMemoizer called from R}
-\description{ The \pkg{SequenceMemoizer} package provides an
+\description{ The \pkg{RSequenceMemoizer} package provides an
   R interface for calling an implementation of a Sequence Memoizer
   written in Java.
 }
@@ -13,7 +13,7 @@
 \examples{
 	## Adapted from example 1: http://www.sequencememoizer.com/matlab/index.html
 	
-	library (SequenceMemoizer)
+	library (RSequenceMemoizer)
 	
 	gettysburg_address <- paste ("Four score and seven years ago our fathers ",
 	       "brought forth on this continent, a new nation, conceived in Liberty,",
