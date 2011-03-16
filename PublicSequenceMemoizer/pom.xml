@@ -11,6 +11,7 @@
     <name>Public Sequence Memoizer</name>
     <description>Stochastic Memoizer for Discrete Sequence Data</description>
 
+	<!--
     <repositories>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -19,10 +20,11 @@
             <layout>default</layout>
         </repository>
     </repositories>
+    -->
     
     <dependencies>
         <dependency>
-            <groupId>gnu</groupId>
+            <groupId>trove</groupId>
             <artifactId>trove</artifactId>
             <version>3.0.0a3</version>
              <type>jar</type>
@@ -34,19 +36,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>                    <excludePackageNames>edu.columbia.stat.wood.pub.sequencememoizer.util</excludePackageNames>
+                <version>2.7</version>
+                <configuration>
+					<excludePackageNames>edu.columbia.stat.wood.pub.sequencememoizer.util</excludePackageNames>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
